@@ -16,5 +16,8 @@
     "url": "https://github.com/mohdeep12345/fragments/issues"
   },
   "homepage": "https://github.com/mohdeep12345/fragments#readme",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "prettier": "3.5.3"
+  }
 }
