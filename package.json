@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "hey",
   "scripts": {
-    "start": "parcel src/index.html",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "debug": "node --inspect src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,10 +20,14 @@
   },
   "homepage": "https://github.com/mohdeep12345/fragments-ui#readme",
   "dependencies": {
+    "aws-jwt-verify": "^5.1.0",
     "dotenv": "^16.5.0",
-    "oidc-client-ts": "^3.2.1"
+    "oidc-client-ts": "^3.2.1",
+    "passport": "^0.7.0",
+    "passport-http-bearer": "^1.0.1"
   },
   "devDependencies": {
+    "nodemon": "^3.1.10",
     "parcel": "^2.15.1"
   }
 }
