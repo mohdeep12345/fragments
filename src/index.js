@@ -1,33 +1,25 @@
-// src/routes/index.js
+// src/index.js
 
-const express = require('express');
+// Read environment variables from an .env file (if present)
+// NOTE: we only need to do this once in our app's main entry point.
+require('dotenv').config();
 
-// version and author from package.json
-const { version, author } = require('../../package.json');
+// We want to log any crash cases so we can debug later from logs.
+const logger = require('./logger');
 
-// Create a router that we can use to mount our API
-const router = express.Router();
-
-/**
- * Expose all of our API routes on /v1/* to include an API version.
- */
-router.use('/v1', require('../api'));
-
-/**
- * Define a simple health check route. If the server is running
- * we'll respond with a 200 OK.  If not, the server isn't healthy.
- */
-router.get('/', (req, res) => {
-  // Client's shouldn't cache this response (always request it fresh)
-  res.setHeader('Cache-Control', 'no-cache');
-  // Send a 200 'OK' response
-  res.status(200).json({
-    status: 'ok',
-    author,
-    // Use your own GitHub URL for this!
-    githubUrl: 'https://github.com/mohdeep12345/fragments',
-    version,
-  });
+// If we're going to crash because of an uncaught exception, log it first.
+// https://nodejs.org/api/process.html#event-uncaughtexception
+process.on('uncaughtException', (err, origin) => {
+  logger.fatal({ err, origin }, 'uncaughtException');
+  throw err;
 });
 
-module.exports = router;
+// If we're going to crash because of an unhandled promise rejection, log it first.
+// https://nodejs.org/api/process.html#event-unhandledrejection
+process.on('unhandledRejection', (reason, promise) => {
+  logger.fatal({ reason, promise }, 'unhandledRejection');
+  throw reason;
+});
+
+// Start our server
+require('./server');
