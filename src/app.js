@@ -1,64 +1,42 @@
-// src/app.js
-
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const passport = require('passport');
 const authenticate = require('./auth');
-const { createErrorResponse } = require('./response') 
+const { createErrorResponse } = require('./response');
 
 const logger = require('./logger');
 const pino = require('pino-http')({
-  // Use our default logger instance, which is already configured
   logger,
 });
 
-// Create an express app instance we can use to attach middleware and HTTP routes
 const app = express();
 
-// Use pino logging middleware
 app.use(pino);
-
-// Use helmetjs security middleware
 app.use(helmet());
-
-// Use CORS middleware so we can make requests across origins
 app.use(cors());
-
-// Use gzip/deflate compression middleware
 app.use(compression());
-
-// Use gzip/deflate compression middleware
-app.use(compression());
-
-// Set up our passport authentication middleware
-passport.use(authenticate.strategy());
 app.use(passport.initialize());
+passport.use(authenticate.strategy());
 
-// Define our routes
 app.use('/', require('./routes'));
 
-// Add 404 middleware to handle any requests for resources that can't be found
-app.use((req, res, next) => {
-  next(createErrorResponse(404, 'not found'));
+// 404 handler — send error response directly, do NOT call next()
+app.use((req, res) => {
+  createErrorResponse(req, res, 404, 'not found');
 });
 
-// Add error-handling middleware to deal with anything else
-// eslint-disable-next-line no-unused-vars
+// Error handling middleware — send error response directly
 app.use((err, req, res, next) => {
-  // We may already have an error response we can use, but if not,
-  // use a generic `500` server error and message.
-  const status = err.error.code || 500;
-  const message = err.error.message || 'unable to process request';
+  const status = err.error?.code || 500;
+  const message = err.error?.message || 'unable to process request';
 
-  // If this is a server error, log something so we can see what's going on.
   if (status > 499) {
-    logger.error({ err }, `Error processing request`);
+    logger.error({ err }, 'Error processing request');
   }
 
-  res.status(status).json(createErrorResponse(status, message));
+  createErrorResponse(req, res, status, message);
 });
 
-// Export our `app` so we can access it in server.js
 module.exports = app;
