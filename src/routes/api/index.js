@@ -1,6 +1,6 @@
 const express = require('express');
 const contentType = require('content-type');
-const { Fragment } = require('../../model/fragment')
+const { Fragment } = require('../../model/fragment');
 
 const router = express.Router();
 

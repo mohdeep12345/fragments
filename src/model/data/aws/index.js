@@ -1,7 +1,7 @@
 // ./src/model/data/aws/index.js
 
 // XXX: temporary use of memory-db until we add DynamoDB
-const logger = require('../../../logger')
+const logger = require('../../../logger');
 const s3Client = require('./s3Client');
 const ddbDocClient = require('./ddbDocClient');
 
@@ -154,7 +154,7 @@ async function listFragments(ownerId, expand = false) {
     // If we haven't expanded to include all attributes, remap this array from
     // [ {"id":"b9e7a264-630f-436d-a785-27f30233faea"}, {"id":"dad25b07-8cd6-498b-9aaf-46d358ea97fe"} ,... ] to
     // [ "b9e7a264-630f-436d-a785-27f30233faea", "dad25b07-8cd6-498b-9aaf-46d358ea97fe", ... ]
-    return !expand ? data?.Items.map((item) => item.id) : data?.Items
+    return !expand ? data?.Items.map((item) => item.id) : data?.Items;
   } catch (err) {
     logger.error({ err, params }, 'error getting all fragments for user from DynamoDB');
     throw err;
@@ -173,7 +173,7 @@ async function deleteFragment(ownerId, id) {
   const ddbParams = {
     TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
     Key: {ownerId, id},
-  }
+  };
 
   // Create a Delete Object command to send to S3
   const s3Command = new DeleteObjectCommand(s3Params);

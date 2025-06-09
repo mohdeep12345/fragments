@@ -1,6 +1,7 @@
 {
-  "name": "lab-3",
+  "name": "lab-2",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test:watch": "jest -c jest.config.js --runInBand --watch --",
@@ -16,7 +17,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@eslint/js": "^9.27.0",
+    "@eslint/js": "^9.28.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "eslint": "^8.57.1",
