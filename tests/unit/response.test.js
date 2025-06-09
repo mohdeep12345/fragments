@@ -1,6 +1,9 @@
 // tests/unit/response.test.js
 
-const { createErrorResponse, createSuccessResponse } = require('../../src/response');
+const {
+  createErrorResponse,
+  createSuccessResponse,
+} = require('../../src/response');
 
 // Define (i.e., name) the set of tests we're about to do
 describe('API Responses', () => {

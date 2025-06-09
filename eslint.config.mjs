@@ -1,15 +1,15 @@
 // eslint.config.mjs
 
-import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
+import js from '@eslint/js';
+import globals from 'globals';
+import pluginReact from 'eslint-plugin-react';
 
 export default [
   // For all JS-like files, apply js plugin recommended rules & browser globals
   {
-    files: ["**/*.{js,mjs,cjs,jsx}"],
+    files: ['**/*.{js,mjs,cjs,jsx}'],
     plugins: { js },
-    extends: ["js/recommended"],
+    extends: ['js/recommended'],
     languageOptions: {
       globals: globals.browser,
     },
@@ -17,9 +17,9 @@ export default [
 
   // For .js files specifically, set sourceType to commonjs
   {
-    files: ["**/*.js"],
+    files: ['**/*.js'],
     languageOptions: {
-      sourceType: "commonjs",
+      sourceType: 'commonjs',
     },
   },
 

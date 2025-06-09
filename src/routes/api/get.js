@@ -1,26 +1,18 @@
-const express = require('express');
+// src/routes/api/get.js
+
+const { Fragment } = require('../../model/fragment');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
-const { getUserFragments } = require('../../model/data');
+const logger = require('../../logger');
 
-const router = express.Router();
-
-router.get('/fragments', async (req, res) => {
+module.exports = async (req, res) => {
   try {
-    const userId = req.user; // assuming user ID is stored here by your auth middleware
-    if (!userId) {
-      // If no user authenticated, return an error response
-      return createErrorResponse(req, res, 401, 'Unauthorized');
-    }
 
-    const fragments = await getUserFragments(userId);
+    const expand = req.query.expand === '1';
+    const fragments = await Fragment.byUser(req.user, expand);
 
-    // Use createSuccessResponse to send fragments data
-    return createSuccessResponse(req, res, 200, fragments);
-
-  } catch (err) {
-    // Handle unexpected errors gracefully
-    return createErrorResponse(req, res, 500, err.message || 'Server error');
+    res.status(200).json(createSuccessResponse({ fragments }));
+  } catch (error) {
+    logger.error({ error }, 'Error getting user fragments');
+    res.status(404).json(createErrorResponse(404, 'User fragments not found'));
   }
-});
-
-module.exports = router;
+};

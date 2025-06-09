@@ -1,28 +1,13 @@
-// src/model/data/memory/index.js
+// ./src/model/data/aws/index.js
 
 // XXX: temporary use of memory-db until we add DynamoDB
-//const MemoryDB = require('../memory/memory-db');
-
+const logger = require('../../../logger')
 const s3Client = require('./s3Client');
 const ddbDocClient = require('./ddbDocClient');
-const { PutCommand, GetCommand, QueryCommand, DeleteCommand } = require('@aws-sdk/lib-dynamodb');
 
 const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { PutCommand, GetCommand, QueryCommand, DeleteCommand } = require('@aws-sdk/lib-dynamodb');
 
-//const logger = require('./logger');
-const logger = require("../../../logger")
-
-
-// Create two in-memory databases: one for fragment metadata and the other for raw data
-//const data = new MemoryDB();
-//const metadata = new MemoryDB();
-
-// // Write a fragment's metadata to memory db. Returns a Promise
-// function writeFragment(fragment) {
-//   return metadata.put(fragment.ownerId, fragment.id, fragment);
-// }
-
-// Writes a fragment to DynamoDB. Returns a Promise.
 // Writes a fragment to DynamoDB. Returns a Promise.
 function writeFragment(fragment) {
   // Configure our PUT params, with the name of the table and item (attributes and keys)
@@ -41,11 +26,6 @@ function writeFragment(fragment) {
     throw err;
   }
 }
-
-// // Read a fragment's metadata from memory db. Returns a Promise
-// function readFragment(ownerId, id) {
-//   return metadata.get(ownerId, id);
-// }
 
 // Reads a fragment from DynamoDB. Returns a Promise<fragment|undefined>
 async function readFragment(ownerId, id) {
@@ -69,11 +49,6 @@ async function readFragment(ownerId, id) {
     throw err;
   }
 }
-
-// // Write a fragment's data buffer to memory db. Returns a Promise
-// function writeFragmentData(ownerId, id, buffer) {
-//   return data.put(ownerId, id, buffer);
-// }
 
 // Writes a fragment's data to an S3 Object in a Bucket
 // https://github.com/awsdocs/aws-sdk-for-javascript-v3/blob/main/doc_source/s3-example-creating-buckets.md#upload-an-existing-object-to-an-amazon-s3-bucket
@@ -99,12 +74,6 @@ async function writeFragmentData(ownerId, id, data) {
     throw new Error('unable to upload fragment data');
   }
 }
-
-// // Read a fragment's data from memory db. Returns a Promise
-// function readFragmentData(ownerId, id) {
-//   return data.get(ownerId, id);
-// }
-
 
 // Convert a stream of data into a Buffer, by collecting
 // chunks of data until finished, then assembling them together.
@@ -152,19 +121,6 @@ async function readFragmentData(ownerId, id) {
   }
 }
 
-// // Get a list of fragment ids/objects for the given user from memory db. Returns a Promise
-// async function listFragments(ownerId, expand = false) {
-//   const fragments = await metadata.query(ownerId);
-
-//   // If we don't get anything back, or are supposed to give expanded fragments, return
-//   if (expand || !fragments) {
-//     return fragments;
-//   }
-
-//   // Otherwise, map to only send back the ids
-//   return fragments.map((fragment) => fragment.id);
-// }
-
 // Get a list of fragments, either ids-only, or full Objects, for the given user.
 // Returns a Promise<Array<Fragment>|Array<string>|undefined>
 async function listFragments(ownerId, expand = false) {
@@ -205,68 +161,38 @@ async function listFragments(ownerId, expand = false) {
   }
 }
 
-// // Delete a fragment's metadata and data from memory db. Returns a Promise
-// function deleteFragment(ownerId, id) {
-//   return Promise.all([
-//     // Delete metadata
-//     metadata.del(ownerId, id),
-//     // Delete data
-//     data.del(ownerId, id),
-//   ]);
-// }
-
-// async function deleteFragment(ownerId, id) {
-//   // Create the DELETE API params from our details
-//   const params = {
-//     Bucket: process.env.AWS_S3_BUCKET_NAME,
-//     // Our key will be a mix of the ownerID and fragment id, written as a path
-//     Key: `${ownerId}/${id}`,
-//   };
-
-//   // Create a DELETE Object command to send to S3
-//   const command = new DeleteObjectCommand(params);
-
-//   try {
-//     // Use our client to send the command
-//     await s3Client.send(command);
-//   } catch (err) {
-//     // If anything goes wrong, log enough info that we can debug
-//     const { Bucket, Key } = params;
-//     logger.error({ err, Bucket, Key }, 'Error deleting fragment data from S3');
-//     throw new Error('unable to delete fragment data');
-//   }
-// }
-
+// Deletes a fragment's data to an S3 Object in a Bucket
 async function deleteFragment(ownerId, id) {
-  // Create the PUT API params from our details
-  const params = {
+  // Create the DELETE API params from our details
+  const s3Params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     // Our key will be a mix of the ownerID and fragment id, written as a path
     Key: `${ownerId}/${id}`,
   };
 
-  const params2 = {
+  const ddbParams = {
     TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-    Key: { ownerId, id },
-  };
+    Key: {ownerId, id},
+  }
 
-  // Create a DELETE Object command to send to S3
-  const command = new DeleteObjectCommand(params);
+  // Create a Delete Object command to send to S3
+  const s3Command = new DeleteObjectCommand(s3Params);
 
-  // Create a DELETE command to send to DynamoDB
-  const command2 = new DeleteCommand(params2);
+  // Create a Delete Object command to send to dynamoDB
+  const ddbCommand = new DeleteCommand(ddbParams);
 
   try {
     // Use our client to send the command
-    await s3Client.send(command);
-    await ddbDocClient.send(command2);
+    // await s3Client.send(s3Command);
+    // await ddbDocClient.send(ddbCommand);
+    return await Promise.all([ddbDocClient.send(ddbCommand), s3Client.send(s3Command)]);
   } catch (err) {
-    const { Bucket, Key } = params;
+    // If anything goes wrong, log enough info that we can debug
+    const { Bucket, Key } = s3Params;
     logger.error({ err, Bucket, Key }, 'Error deleting fragment data from S3');
-    throw new Error('unable to delete fragment data');
+    throw new Error('unable to delete fragment');
   }
 }
-
 
 module.exports.listFragments = listFragments;
 module.exports.writeFragment = writeFragment;

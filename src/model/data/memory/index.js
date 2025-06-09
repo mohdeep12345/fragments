@@ -1,4 +1,4 @@
-// src/model/data/memory/index.js
+// ./src/model/data/memory/index.js
 
 const MemoryDB = require('./memory-db');
 
