@@ -1,5 +1,6 @@
 // src/logger.js
-
+const pino = require('pino');
+module.exports = pino();
 const options = { level: process.env.LOG_LEVEL || 'info' };
 
 if (options.level === 'debug') {

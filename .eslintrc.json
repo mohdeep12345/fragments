@@ -1,0 +1,19 @@
+{
+  "env": {
+    "node": true,
+    "es2021": true
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "script"
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.js", "tests/**/*.js"],
+      "rules": {
+        "semi": ["error", "always"]
+      }
+    }
+  ],
+  "extends": ["eslint:recommended"]
+}

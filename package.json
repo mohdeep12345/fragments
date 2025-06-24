@@ -1,11 +1,10 @@
 {
   "name": "lab-2",
   "version": "1.0.0",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "test:watch": "jest -c jest.config.js --runInBand --watch --",
-    "test": "jest -c jest.config.js --runInBand --",
+    "test": "jest --runInBand",
     "coverage": "jest -c jest.config.js --runInBand --coverage",
     "lint": "eslint \"./src/**/*.js\" \"tests/**/*.js\"",
     "start": "node src/index.js",
@@ -36,10 +35,12 @@
     "http-auth": "^4.2.1",
     "http-auth-passport": "^1.0.7",
     "markdown-it": "^14.1.0",
+    "oidc-client-ts": "^3.2.1",
     "passport": "^0.7.0",
     "passport-http-bearer": "^1.0.1",
     "pino": "^9.7.0",
     "pino-http": "^10.4.0",
+    "react-oidc-context": "^3.3.0",
     "sharp": "^0.34.2",
     "stoppable": "^1.1.0"
   }
