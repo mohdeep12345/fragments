@@ -1,36 +1,41 @@
-# Dockerfile for fragments microservice
-# This file defines how to build a Docker image of our Node.js-based fragments service.
-# It sets up the environment, installs dependencies, and defines how the container should run.
+# ----------------------------
+# Stage 1: Build dependencies
+# ----------------------------
+FROM node:22.15.0 AS builder
 
-# Step 1: Use node version 22.15.0 as the base image
-FROM node:22.15.0
-
-# Step 2: Add metadata about the image
 LABEL maintainer="Mohdeep Singh <rokingmohdeep@gmail.com>"
 LABEL description="Fragments Node.js microservice"
 
-# Step 3: Set environment variables
-ENV PORT=8080
+# Set environment variables
 ENV NPM_CONFIG_LOGLEVEL=warn
 ENV NPM_CONFIG_COLOR=false
 
-# Step 4: Set working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Step 5: Copy package.json and package-lock.json into image
+# Copy dependency files and install
 COPY package*.json ./
+RUN npm install --omit=dev
 
-# Step 6: Install dependencies inside the container
-RUN npm install
+# Copy all source code
+COPY . .
 
-# Step 7: Copy the source code into the container
-COPY ./src ./src
+# --------------------------
+# Stage 2: Runtime image
+# --------------------------
+FROM node:22.15.0-slim
 
-# Step 8: Copy the .htpasswd file (inside tests directory) into the container
-COPY ./tests ./tests
+# Set working directory
+WORKDIR /app
 
-# Step 9: Start the container by running our server using exec form
-CMD ["npm", "start"]
+# Copy only what's needed from build stage
+COPY --from=builder /app .
 
-# Step 10: Expose the port used by the service
+# Set environment variable
+ENV PORT=8080
+
+# Expose service port
 EXPOSE 8080
+
+# Start app
+CMD ["npm", "start"]
