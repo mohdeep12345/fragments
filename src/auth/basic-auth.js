@@ -15,7 +15,7 @@ module.exports.strategy = () =>
   authPassport(
     auth.basic({
       file: process.env.HTPASSWD_FILE,
-    })
+    }),
   );
 
 module.exports.authenticate = () => authorize('http');

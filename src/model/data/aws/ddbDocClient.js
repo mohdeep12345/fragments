@@ -34,7 +34,7 @@ const getDynamoDBEndpoint = () => {
   if (process.env.AWS_DYNAMODB_ENDPOINT_URL) {
     logger.debug(
       { endpoint: process.env.AWS_DYNAMODB_ENDPOINT_URL },
-      'Using alternate DynamoDB endpoint'
+      'Using alternate DynamoDB endpoint',
     );
     return process.env.AWS_DYNAMODB_ENDPOINT_URL;
   }

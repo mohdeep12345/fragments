@@ -19,8 +19,8 @@ router.post('/fragments', rawBody(), require('./post'));
 
 // GET
 router.get('/fragments', require('./get'));
-router.get('/fragments/:id', require('./getById'));        // Route without extension
-router.get('/fragments/:id.:ext', require('./getById'));   // Route with extension
+router.get('/fragments/:id', require('./getById')); // Route without extension
+router.get('/fragments/:id.:ext', require('./getById')); // Route with extension
 router.get('/fragments/:id/info', require('./getByIdInfo'));
 
 // DELETE

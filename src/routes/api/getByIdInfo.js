@@ -1,7 +1,10 @@
 // src/routes/api/getbyIdInfo.js
 const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
-const { createErrorResponse, createSuccessResponse } = require('../../response');
+const {
+  createErrorResponse,
+  createSuccessResponse,
+} = require('../../response');
 
 module.exports = async (req, res) => {
   const { id } = req.params;
@@ -12,7 +15,9 @@ module.exports = async (req, res) => {
 
     if (!fragment) {
       logger.warn(`Fragment with ID ${id} not found.`);
-      return res.status(404).json(createErrorResponse(404, 'Fragment metadata not found'));
+      return res
+        .status(404)
+        .json(createErrorResponse(404, 'Fragment metadata not found'));
     }
 
     // Set Content-Type and respond with fragment metadata
@@ -21,8 +26,16 @@ module.exports = async (req, res) => {
 
     logger.info(`Fragment metadata retrieved successfully for ID: ${id}`);
   } catch (err) {
-    logger.error(`Error retrieving fragment metadata for ID: ${id}`, { error: err });
-    res.status(500).json(createErrorResponse(500, 'Internal server error while retrieving fragment metadata'));
+    logger.error(`Error retrieving fragment metadata for ID: ${id}`, {
+      error: err,
+    });
+    res
+      .status(500)
+      .json(
+        createErrorResponse(
+          500,
+          'Internal server error while retrieving fragment metadata',
+        ),
+      );
   }
 };
-

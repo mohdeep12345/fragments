@@ -17,7 +17,7 @@ class MemoryDB {
   get(primaryKey, secondaryKey) {
     if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
       throw new Error(
-        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`,
       );
     }
 
@@ -35,7 +35,7 @@ class MemoryDB {
   put(primaryKey, secondaryKey, value) {
     if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
       throw new Error(
-        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`,
       );
     }
 
@@ -55,7 +55,9 @@ class MemoryDB {
    */
   query(primaryKey) {
     if (!validateKey(primaryKey)) {
-      throw new Error(`primaryKey string is required, got primaryKey=${primaryKey}`);
+      throw new Error(
+        `primaryKey string is required, got primaryKey=${primaryKey}`,
+      );
     }
 
     // No matter what, we always return an array (even if empty)
@@ -73,14 +75,14 @@ class MemoryDB {
   async del(primaryKey, secondaryKey) {
     if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
       throw new Error(
-        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`,
       );
     }
 
     // Throw if trying to delete a key that doesn't exist
     if (!(await this.get(primaryKey, secondaryKey))) {
       throw new Error(
-        `missing entry for primaryKey=${primaryKey} and secondaryKey=${secondaryKey}`
+        `missing entry for primaryKey=${primaryKey} and secondaryKey=${secondaryKey}`,
       );
     }
 

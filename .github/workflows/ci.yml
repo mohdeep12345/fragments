@@ -73,7 +73,7 @@ jobs:
 
       - name: Build and push
         env:
-          DOCKERHUB_REPO: mohdeepsingh10/fragments  # <-- replace with your Docker Hub username/repo if needed
+          DOCKERHUB_REPO: mohdeepsingh10/fragments # <-- replace with your Docker Hub username/repo if needed
           SHA_TAG: sha-${{ github.sha }}
         uses: docker/build-push-action@v6
         with:

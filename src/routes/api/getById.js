@@ -13,12 +13,16 @@ module.exports = async (req, res) => {
 
     if (!fragment) {
       logger.warn(`Fragment with ID ${id} not found.`);
-      return res.status(404).json(createErrorResponse(404, 'Fragment not found'));
+      return res
+        .status(404)
+        .json(createErrorResponse(404, 'Fragment not found'));
     }
 
     if (!Fragment.isSupportedType(fragment.type)) {
       logger.warn(`Unsupported fragment type: ${fragment.type}`);
-      return res.status(415).json(createErrorResponse(415, 'Unsupported fragment type'));
+      return res
+        .status(415)
+        .json(createErrorResponse(415, 'Unsupported fragment type'));
     }
 
     const fragData = await fragment.getData();
@@ -34,7 +38,15 @@ module.exports = async (req, res) => {
         break;
 
       case 'txt':
-        if (['text/plain', 'text/markdown', 'text/html', 'text/csv', 'application/json'].includes(fragment.type)) {
+        if (
+          [
+            'text/plain',
+            'text/markdown',
+            'text/html',
+            'text/csv',
+            'application/json',
+          ].includes(fragment.type)
+        ) {
           res.setHeader('Content-Type', 'text/plain');
           return res.status(200).send(fragData);
         }
@@ -68,12 +80,18 @@ module.exports = async (req, res) => {
       case 'avif':
         if (fragment.type.startsWith('image/')) {
           try {
-            const convertedData = await sharp(Buffer.from(fragData)).toFormat(ext).toBuffer();
+            const convertedData = await sharp(Buffer.from(fragData))
+              .toFormat(ext)
+              .toBuffer();
             res.setHeader('Content-Type', `image/${ext}`);
             return res.status(200).send(convertedData);
           } catch (error) {
             logger.error({ error }, `Error converting image to ${ext}`);
-            return res.status(415).json(createErrorResponse(415, `Error converting image to ${ext}`));
+            return res
+              .status(415)
+              .json(
+                createErrorResponse(415, `Error converting image to ${ext}`),
+              );
           }
         }
         break;
@@ -87,9 +105,13 @@ module.exports = async (req, res) => {
     }
 
     logger.warn(`Unsupported conversion for extension: ${ext}`);
-    res.status(415).json(createErrorResponse(415, 'Unsupported conversion type'));
+    res
+      .status(415)
+      .json(createErrorResponse(415, 'Unsupported conversion type'));
   } catch (err) {
     logger.error({ err }, `Error fetching fragment with ID ${id}`);
-    res.status(500).json(createErrorResponse(500, 'Unable to retrieve the fragment'));
+    res
+      .status(500)
+      .json(createErrorResponse(500, 'Unable to retrieve the fragment'));
   }
 };

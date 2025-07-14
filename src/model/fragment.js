@@ -39,7 +39,9 @@ class Fragment {
   static async byUser(ownerId, expand = false) {
     try {
       const fragments = await listFragments(ownerId, expand);
-      return expand ? fragments.map((fragment) => new Fragment(fragment)) : fragments;
+      return expand
+        ? fragments.map((fragment) => new Fragment(fragment))
+        : fragments;
     } catch (error) {
       logger.warn('Error fetching user fragments', { error });
       return [];
@@ -88,7 +90,9 @@ class Fragment {
       const data = await this.getData();
       return data.toString('utf-8');
     } catch (error) {
-      logger.error('Error retrieving or displaying fragment content', { error });
+      logger.error('Error retrieving or displaying fragment content', {
+        error,
+      });
       throw new Error('Failed to retrieve or display fragment content');
     }
   }

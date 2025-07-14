@@ -23,7 +23,9 @@ const getCredentials = () => {
       // Not all situations require this, so we won't check for it above, just use it if it is present.
       sessionToken: process.env.AWS_SESSION_TOKEN,
     };
-    logger.debug('Using extra S3 Credentials AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY');
+    logger.debug(
+      'Using extra S3 Credentials AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY',
+    );
     return credentials;
   }
 };
@@ -34,7 +36,10 @@ const getCredentials = () => {
  */
 const getS3Endpoint = () => {
   if (process.env.AWS_S3_ENDPOINT_URL) {
-    logger.debug({ endpoint: process.env.AWS_S3_ENDPOINT_URL }, 'Using alternate S3 endpoint');
+    logger.debug(
+      { endpoint: process.env.AWS_S3_ENDPOINT_URL },
+      'Using alternate S3 endpoint',
+    );
     return process.env.AWS_S3_ENDPOINT_URL;
   }
 };

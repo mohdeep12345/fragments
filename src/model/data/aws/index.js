@@ -5,8 +5,17 @@ const logger = require('../../../logger');
 const s3Client = require('./s3Client');
 const ddbDocClient = require('./ddbDocClient');
 
-const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
-const { PutCommand, GetCommand, QueryCommand, DeleteCommand } = require('@aws-sdk/lib-dynamodb');
+const {
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} = require('@aws-sdk/client-s3');
+const {
+  PutCommand,
+  GetCommand,
+  QueryCommand,
+  DeleteCommand,
+} = require('@aws-sdk/lib-dynamodb');
 
 // Writes a fragment to DynamoDB. Returns a Promise.
 function writeFragment(fragment) {
@@ -22,7 +31,10 @@ function writeFragment(fragment) {
   try {
     return ddbDocClient.send(command);
   } catch (err) {
-    logger.warn({ err, params, fragment }, 'error writing fragment to DynamoDB');
+    logger.warn(
+      { err, params, fragment },
+      'error writing fragment to DynamoDB',
+    );
     throw err;
   }
 }
@@ -156,7 +168,10 @@ async function listFragments(ownerId, expand = false) {
     // [ "b9e7a264-630f-436d-a785-27f30233faea", "dad25b07-8cd6-498b-9aaf-46d358ea97fe", ... ]
     return !expand ? data?.Items.map((item) => item.id) : data?.Items;
   } catch (err) {
-    logger.error({ err, params }, 'error getting all fragments for user from DynamoDB');
+    logger.error(
+      { err, params },
+      'error getting all fragments for user from DynamoDB',
+    );
     throw err;
   }
 }
@@ -172,7 +187,7 @@ async function deleteFragment(ownerId, id) {
 
   const ddbParams = {
     TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-    Key: {ownerId, id},
+    Key: { ownerId, id },
   };
 
   // Create a Delete Object command to send to S3
@@ -185,7 +200,10 @@ async function deleteFragment(ownerId, id) {
     // Use our client to send the command
     // await s3Client.send(s3Command);
     // await ddbDocClient.send(ddbCommand);
-    return await Promise.all([ddbDocClient.send(ddbCommand), s3Client.send(s3Command)]);
+    return await Promise.all([
+      ddbDocClient.send(ddbCommand),
+      s3Client.send(s3Command),
+    ]);
   } catch (err) {
     // If anything goes wrong, log enough info that we can debug
     const { Bucket, Key } = s3Params;
