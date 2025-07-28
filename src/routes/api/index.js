@@ -23,10 +23,11 @@ router.get('/fragments/:id', require('./getById')); // Route without extension
 router.get('/fragments/:id.:ext', require('./getById')); // Route with extension
 router.get('/fragments/:id/info', require('./getByIdInfo'));
 
-// DELETE
-router.delete('/fragments/:id', require('./deleteById'));
+// DELETE /v1/fragments/:id
+router.delete('/fragments/:id', require('./delete'));
 
 // PUT
 router.put('/fragments/:id', rawBody(), require('./putById'));
 
 module.exports = router;
+

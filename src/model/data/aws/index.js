@@ -1,4 +1,5 @@
 // ./src/model/data/aws/index.js
+const MemoryDB = require('../memory/memory-db'); // metadata still in-memory
 
 // XXX: temporary use of memory-db until we add DynamoDB
 const logger = require('../../../logger');
@@ -176,37 +177,26 @@ async function listFragments(ownerId, expand = false) {
   }
 }
 
-// Deletes a fragment's data to an S3 Object in a Bucket
+// Deletes a fragment's data from S3 and metadata from memory
 async function deleteFragment(ownerId, id) {
   // Create the DELETE API params from our details
-  const s3Params = {
+  const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     // Our key will be a mix of the ownerID and fragment id, written as a path
     Key: `${ownerId}/${id}`,
   };
 
-  const ddbParams = {
-    TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-    Key: { ownerId, id },
-  };
-
   // Create a Delete Object command to send to S3
-  const s3Command = new DeleteObjectCommand(s3Params);
-
-  // Create a Delete Object command to send to dynamoDB
-  const ddbCommand = new DeleteCommand(ddbParams);
+  const command = new DeleteObjectCommand(params);
 
   try {
-    // Use our client to send the command
-    // await s3Client.send(s3Command);
-    // await ddbDocClient.send(ddbCommand);
-    return await Promise.all([
-      ddbDocClient.send(ddbCommand),
-      s3Client.send(s3Command),
-    ]);
+    // Delete from S3 first
+    await s3Client.send(command);
+    // Then delete the metadata from memory
+    return MemoryDB.deleteFragment(ownerId, id);
   } catch (err) {
     // If anything goes wrong, log enough info that we can debug
-    const { Bucket, Key } = s3Params;
+    const { Bucket, Key } = params;
     logger.error({ err, Bucket, Key }, 'Error deleting fragment data from S3');
     throw new Error('unable to delete fragment');
   }
@@ -218,3 +208,4 @@ module.exports.readFragment = readFragment;
 module.exports.writeFragmentData = writeFragmentData;
 module.exports.readFragmentData = readFragmentData;
 module.exports.deleteFragment = deleteFragment;
+
