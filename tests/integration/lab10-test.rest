@@ -1,0 +1,51 @@
+### 1. POST a new JSON fragment
+POST http://localhost:8080/v1/fragments
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==  # base64 of user1@email.com:password1
+Content-Type: application/json
+
+{ "service": "DynamoDB" }
+
+###
+
+### 3. GET the metadata of fragment1
+GET http://localhost:8080/v1/fragments/<fragment1_id>/info
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+
+###
+
+### 5. POST a second markdown fragment
+POST http://localhost:8080/v1/fragments
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+Content-Type: text/markdown
+
+DynamoDB is **great**.
+
+###
+
+### 7. GET metadata of fragment2
+GET http://localhost:8080/v1/fragments/<fragment2_id>/info
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+
+###
+
+### 9. GET all fragments (IDs)
+GET http://localhost:8080/v1/fragments
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+
+###
+
+### 11. DELETE fragment1
+DELETE http://localhost:8080/v1/fragments/<fragment1_id>
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+
+###
+
+### 13. Try to GET deleted fragment1
+GET http://localhost:8080/v1/fragments/<fragment1_id>
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
+
+###
+
+### 15. Final check: GET all fragments
+GET http://localhost:8080/v1/fragments
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
